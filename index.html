@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a1424">
+  <meta name="description" content="Juego educativo basado en el libro Por qué fracasan los países, de Daron Acemoglu y James A. Robinson.">
+  <title>Por qué fracasan los países · Simulador de instituciones</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ CABECERA: marca, reinicio y barra de progreso ============ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🏛️</span>
+        <div class="brand-text">
+          <span class="brand-title">Por qué fracasan los países</span>
+          <span class="brand-sub" id="country-label">Simulador de instituciones</span>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost" id="btn-reset" hidden>↺ Reiniciar</button>
+    </div>
+
+    <!-- La barra de progreso solo se muestra mientras se juega -->
+    <div class="hud" id="hud" hidden>
+      <div class="hud-inner">
+        <span class="hud-label" id="progress-label">Situación 1 de 9</span>
+        <div class="progress" id="progress" role="progressbar" aria-label="Progreso del juego"
+             aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="hud-pct" id="progress-pct">0 %</span>
+      </div>
+      <!-- Resumen de indicadores: solo se ve en pantallas pequeñas -->
+      <div class="mini-hud" id="mini-hud" aria-label="Resumen de indicadores"></div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+
+    <!-- ============ PANTALLA 1: INTRODUCCIÓN ============ -->
+    <section class="screen" id="screen-intro" aria-labelledby="intro-title">
+      <div class="intro-head">
+        <h1 id="intro-title">Tus decisiones definen si un país prospera o fracasa</h1>
+        <p class="lead">
+          Este juego se basa en el libro <cite>Por qué fracasan los países</cite>, de Daron Acemoglu y
+          James A. Robinson. Vas a gobernar una nación ficticia durante
+          <span id="total-scenarios">9</span> situaciones y comprobarás cómo cada decisión cambia su
+          economía, su bienestar y, sobre todo, sus instituciones.
+        </p>
+      </div>
+
+      <!-- Idea central del libro: dos tipos de instituciones -->
+      <div class="grid-2">
+        <article class="card tone-good-card">
+          <h2 class="card-title"><span aria-hidden="true">🌱</span> Instituciones inclusivas</h2>
+          <ul class="plain-list">
+            <li>El poder está repartido entre muchos y tiene límites claros.</li>
+            <li>La ley protege a todos y los derechos de propiedad son seguros.</li>
+            <li>Cualquier persona puede estudiar, emprender e innovar.</li>
+          </ul>
+        </article>
+        <article class="card tone-bad-card">
+          <h2 class="card-title"><span aria-hidden="true">⛓️</span> Instituciones extractivas</h2>
+          <ul class="plain-list">
+            <li>El poder está en manos de una élite reducida.</li>
+            <li>La riqueza se extrae de la mayoría para beneficio de pocos.</li>
+            <li>Se bloquea la competencia y todo cambio que amenace a la élite.</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="card note-card">
+        <h2 class="card-title"><span aria-hidden="true">🧭</span> ¿Y la geografía, la cultura o la ignorancia?</h2>
+        <p>
+          Los autores sostienen que estas explicaciones populares no bastan para entender la pobreza.
+          Un ejemplo es Nogales: una ciudad dividida por una frontera, con el mismo clima y raíces
+          culturales parecidas, pero con niveles de prosperidad muy distintos a cada lado. La diferencia
+          está en las reglas que organizan la vida política y económica.
+        </p>
+      </article>
+
+      <article class="card start-card">
+        <h2 class="card-title"><span aria-hidden="true">🎮</span> Cómo se juega</h2>
+        <ul class="plain-list rules-list">
+          <li><span aria-hidden="true">🎯</span> <span><strong>Meta:</strong> llegar al final con economía y bienestar por encima de 60 e instituciones inclusivas por encima de 65 (marcados con una línea dorada), sin que ningún otro indicador baje de 40.</span></li>
+          <li><span aria-hidden="true">🧩</span> <span><strong>Cada situación</strong> ofrece varias opciones. Todas tienen ventajas y costos, y ninguna es neutral.</span></li>
+          <li><span aria-hidden="true">⚠️</span> <span><strong>Cuidado:</strong> si acumulas cuatro decisiones extractivas o un indicador clave se desploma, el país fracasa.</span></li>
+        </ul>
+
+        <form class="start-form" id="start-form" autocomplete="off">
+          <label for="country-name">Nombre de tu país</label>
+          <div class="start-row">
+            <input id="country-name" name="country" type="text" maxlength="24" value="Valmora" placeholder="Valmora">
+            <button type="submit" class="btn btn-primary">Comenzar a gobernar</button>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <!-- ============ PANTALLA 2: JUEGO ============ -->
+    <section class="screen" id="screen-game" aria-label="Partida en curso" hidden>
+      <div class="game-grid">
+        <div class="stage">
+          <!-- La tarjeta de la situación se genera desde script.js -->
+          <article class="card scenario" id="scenario"></article>
+        </div>
+        <!-- El panel de indicadores también se genera desde script.js -->
+        <aside class="panel" id="panel" aria-label="Indicadores del país"></aside>
+      </div>
+    </section>
+
+    <!-- ============ PANTALLAS FINALES (se rellenan desde script.js) ============ -->
+    <section class="screen end" id="screen-win" hidden></section>
+    <section class="screen end" id="screen-mixed" hidden></section>
+    <section class="screen end" id="screen-lose" hidden></section>
+
+  </main>
+
+  <footer class="foot">
+    <p>Proyecto educativo inspirado en <cite>Por qué fracasan los países</cite> (Acemoglu y Robinson). Los hechos históricos se resumen con fines didácticos.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
